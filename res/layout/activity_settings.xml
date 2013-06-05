@@ -1,0 +1,229 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:orientation="vertical"
+        tools:ignore="UselessParent" >
+
+        <TextView
+            android:id="@+id/textViewNetworkSettings"
+            style="@style/AppTheme"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/network_settings" />
+
+        <TableLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" >
+
+            <TableRow
+                android:id="@+id/tableRowServerAddress"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" >
+
+                <TextView
+                    android:id="@+id/textViewServerAddress"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/server_address" />
+
+                <EditText
+                    android:id="@+id/editTextServerAddress"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:digits="1234567890."
+                    android:hint="@string/default_ip"
+                    android:inputType="phone"
+                    android:singleLine="true" >
+
+                    <requestFocus />
+                </EditText>
+            </TableRow>
+
+            <TableRow
+                android:id="@+id/tableRowFilename"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" >
+
+                <TextView
+                    android:id="@+id/textViewFilename"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/filename" />
+
+                <EditText
+                    android:id="@+id/editTextFilename"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:hint="@string/default_mmf"
+                    android:singleLine="true" />
+            </TableRow>
+        </TableLayout>
+
+        <TextView
+            android:id="@+id/textViewCommonValues"
+            style="@style/AppTheme"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:text="@string/common_values" />
+
+        <TableLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" >
+
+            <TableRow
+                android:id="@+id/tableRowLatitude"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" >
+
+                <TextView
+                    android:id="@+id/textViewLatitude"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/latitude" />
+
+                <EditText
+                    android:id="@+id/editTextLatitude"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:digits="1234567890.-"
+                    android:hint="@string/latitude_hint"
+                    android:inputType="phone"
+                    android:singleLine="true" >
+                </EditText>
+            </TableRow>
+
+            <TableRow
+                android:id="@+id/tableRowLongitude"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" >
+
+                <TextView
+                    android:id="@+id/textViewLongitude"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginRight="5dp"
+                    android:text="@string/longitude" />
+
+                <EditText
+                    android:id="@+id/editTextLongitude"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:digits="1234567890.-"
+                    android:hint="@string/longitude_hint"
+                    android:inputType="phone"
+                    android:singleLine="true" />
+            </TableRow>
+
+            <TableRow
+                android:id="@+id/tableRowHeight"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" >
+
+                <TextView
+                    android:id="@+id/TextViewHeight"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginRight="5dp"
+                    android:text="@string/height" />
+
+                <EditText
+                    android:id="@+id/EditTextHeight"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:hint="@string/height_hint"
+                    android:inputType="number"
+                    android:singleLine="true" />
+            </TableRow>
+
+            <TableRow
+                android:id="@+id/tableRowSpeed"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" >
+
+                <TextView
+                    android:id="@+id/TextViewSpeed"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginRight="5dp"
+                    android:text="@string/speed_edittext" />
+
+                <EditText
+                    android:id="@+id/EditTextSpeed"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:hint="@string/speed_hint"
+                    android:inputType="number"
+                    android:singleLine="true" />
+            </TableRow>
+
+            <TableRow
+                android:id="@+id/tableRowCourse"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" >
+
+                <TextView
+                    android:id="@+id/TextViewCourse"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginRight="5dp"
+                    android:text="@string/course_edittext" />
+
+                <EditText
+                    android:id="@+id/EditTextCourse"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:hint="@string/course_hint"
+                    android:inputType="numberDecimal"
+                    android:singleLine="true" />
+            </TableRow>
+        </TableLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="left|center_vertical" >
+
+            <Button
+                android:id="@+id/buttonConnect"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="left|center_vertical"
+                android:text="@string/btn_connect" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="right|center_vertical" >
+
+                <Button
+                    android:id="@+id/buttonApply"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/btn_apply" />
+
+                <Button
+                    android:id="@+id/buttonCancel"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/btn_cancel" />
+
+            </LinearLayout>
+
+        </LinearLayout>
+    </LinearLayout>
+
+</RelativeLayout>

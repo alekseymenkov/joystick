@@ -1,0 +1,144 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/mainActivityLayout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:descendantFocusability="beforeDescendants"
+    android:focusableInTouchMode="true"
+    tools:context="Test" >
+
+    <LinearLayout
+        android:id="@+id/LinearLayout"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:orientation="vertical"
+        tools:ignore="UselessParent" >
+
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="0" >
+
+            <Spinner
+                android:id="@+id/spinnerMode"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center|fill"
+                android:layout_weight="1"
+                tools:ignore="NestedWeights" />
+
+            <ToggleButton
+                android:id="@+id/toggleBtnMode"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_weight="0" />
+        </LinearLayout>
+
+               <LinearLayout
+                   android:id="@+id/layoutMain"
+                   android:layout_width="fill_parent"
+                   android:layout_height="fill_parent"
+                   android:layout_margin="5dp"
+                   android:layout_weight="1"
+                   android:baselineAligned="false" >
+
+                   <verticalseekbar.VerticalSeekBar
+                       android:id="@+id/seekBarForce"
+                       android:layout_width="wrap_content"
+                       android:layout_height="fill_parent"
+                       android:layout_marginRight="5dp" />
+
+                   <LinearLayout
+                       android:id="@+id/layoutContent"
+                       android:layout_width="fill_parent"
+                       android:layout_height="fill_parent"
+                       android:gravity="center_horizontal"
+                       android:orientation="vertical" >
+
+                   </LinearLayout>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_weight="0" >
+
+            <numberpicker.NumberPicker
+                android:id="@+id/numberPickerDegrees"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_gravity="center_horizontal"
+                android:layout_weight="1"
+                android:orientation="vertical"
+                tools:ignore="NestedWeights,InefficientWeight" >
+
+                <TextView
+                    android:id="@+id/textViewCourse"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:text="@string/course"
+                    android:textAppearance="?android:attr/textAppearanceLarge"
+                    android:textSize="30sp" />
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_weight="1"
+                    tools:ignore="InefficientWeight" >
+
+                    <TextView
+                        android:id="@+id/textViewDegrees"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_horizontal"
+                        android:layout_marginRight="5dp"
+                        android:textSize="25sp" />
+
+                    <TextView
+                        android:id="@+id/textViewMinutus"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_horizontal"
+                        android:layout_marginLeft="5dp"
+                        android:textSize="25sp" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" >
+
+                    <Button
+                        android:id="@+id/btnView"
+                        style="buttonStyle"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="@string/view" />
+
+                    <Button
+                        android:id="@+id/btnReset"
+                        style="buttonStyle"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="@string/reset" />
+
+                </LinearLayout>
+            </LinearLayout>
+
+            <numberpicker.NumberPicker
+                android:id="@+id/numberPickerMinutus"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+        </LinearLayout>
+    </LinearLayout>
+
+</RelativeLayout>

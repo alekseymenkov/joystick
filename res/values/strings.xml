@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="menu_connect">Подключить</string>
+    <string name="menu_disconnect">Отключить</string>
+    <string name="menu_settings">Настройки</string>
+    <string name="menu_exit">Выход</string>
+    <string name="app_name">joystick</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="speed">скорость: </string>
+    <string name="speedUnits">км/ч</string>
+    <string name="degreesSymbol">°</string>
+    <string name="minutusSymbol">′</string>
+    <string name="course">курс</string>
+    <string name="dialog_set_number">Set</string>
+    <string name="dialog_cancel">Cancel</string>
+    <string name="dialog_picker_title">Choose a number</string>
+    
+    <string name="connection_success">Подключение установлено</string>
+	<string name="connection_fail">Подключение не установлено</string>
+	<string name="connection_aborted">Подключение разорвано</string>
+	<string name="network_settings">Сетевые настройки</string>
+	<string name="server_address">"Адрес сервера: "</string>
+	<string name="default_ip">192.168.0.1</string>
+	<string name="filename">Имя файла:</string>
+	<string name="default_mmf">Global\\BINS.mkar</string>
+	<string name="common_values">Начальные значения</string>
+	<string name="latitude">Широта:</string>
+	<string name="longitude">Долгота:</string>
+	<string name="height">Высота:</string>
+	<string name="speed_edittext">Скорость:</string>
+	<string name="course_edittext">Курс:</string>
+	<string name="latitude_hint">34.25.008</string>
+	<string name="longitude_hint">45.12.001</string>
+	<string name="height_hint">1200</string>
+	<string name="speed_hint">400</string>
+	<string name="course_hint">123.43</string>
+	<string name="btn_apply">Сохранить</string>
+	<string name="btn_cancel">Отмена</string>
+	<string name="btn_connect">Подключить</string>
+	<string name="view">Вид</string>
+	<string name="reset">Сброс</string>
+	
+</resources>
