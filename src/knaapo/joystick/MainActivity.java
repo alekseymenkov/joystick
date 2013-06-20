@@ -33,6 +33,7 @@ import android.content.DialogInterface.OnCancelListener;
 import android.content.DialogInterface.OnClickListener;
 import android.content.SharedPreferences.Editor;
 import android.content.Intent;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -55,12 +56,13 @@ import android.widget.SeekBar.OnSeekBarChangeListener;
 
 public class MainActivity extends Activity {
 
-	// ��������� ��� ����������� ������ ������� ����
+	// Константа для определения режима запуска окна
 	final String RUN_MODE = "RUN_MODE";
-	// ��������� ��� ������������ UI
+	// Константа для конфигурации UI
 	final String VIEW_TYPE = "VIEW_TYPE";
 
 	static final int MAX_FORCE = 200;
+    static final int MAX_SPEED = 650;
 	static final int MAX_TANGAGE = 200;
 	static final int MAX_HEELING = 200;
 	static final int MIN_DEGREES = 0;
@@ -68,29 +70,29 @@ public class MainActivity extends Activity {
 	static final int MIN_MINUTUS = 0;
 	static final int MAX_MINUTUS = 59;
 
-	// ������������ ��������� ����������
+	// Конфигурация элементов упрваления
 	int mViewType;
 
-	// ������� ����� + �����
+	// Сетевой класс + поток
 	Network mNetwork;
 	Thread mNetworkThread;
 
-	// ������� ��� �������� �������� ������ ����������
+	// Объекты для передачи настроек внутри приложения
 	NetworkPreferences mNetworkPreferences;
 	CommonPreferences mCommonPreferences;
 
-	// ���������� ����
+	// Диалоговые окна
 	static ProgressDialog mConnectToServerDialog;
 	static Dialog mRemoteControlDialog;
 	static Dialog mProcessingOverDialog;
 	
-	// �������� ��� ������ � UI �� ������ �������
+	// Контекст для работы с UI из других потоков
 	static Context mMainActivityContext;
 
-	// ���������
+	// Настройки
 	SharedPreferences mPreferences;
 
-	// �������� UI
+	// Элементы UI
 	TextView mTextViewDegrees;
 	TextView mTextViewMinutus;
 	static VerticalSeekBar mSeekBarForce;
@@ -108,10 +110,10 @@ public class MainActivity extends Activity {
 	static boolean mIsFirstRun;
 	static boolean mIsConnected;
 
-	// ������� ��� ����������� ������
+	// Адаптер для выпадающего списка
 	static ArrayAdapter<String> mArrayAdapter;
 	static ArrayList<String> mModesList;
-	Content mContent;
+	static Content mContent;
 
 
 	protected void onCreate(Bundle savedInstanceState) {
@@ -122,20 +124,20 @@ public class MainActivity extends Activity {
 		mIsFirstRun = true;
 		mIsConnected = false;
 
-		// ������
+		// Данные
 		mContent = new Content();
 
-		// ����
+		// Сеть
 		mNetwork = null;
 
-		// ���������� ��������� �������� ���� ��� ������ � ���������� UI �� ������������ �������
+		// Сохранение контекста главного окна для работа с элементами UI из параллельных потоков
 		mMainActivityContext = this;
 
-		// ������ �������� ����������� � �������
+		// Диалог ожидания подключения к серверу
 		mConnectToServerDialog = new ProgressDialog(this);
-		mConnectToServerDialog.setTitle("����������� � �������");
-		mConnectToServerDialog.setMessage("����������� ����������� � �������...");
-		mConnectToServerDialog.setButton(Dialog.BUTTON_NEGATIVE, "������", new OnClickListener() {
+		mConnectToServerDialog.setTitle("Подключение к серверу");
+		mConnectToServerDialog.setMessage("Выполняется подключение к серверу...");
+		mConnectToServerDialog.setButton(Dialog.BUTTON_NEGATIVE, "Отмена", new OnClickListener() {
 			public void onClick(DialogInterface arg0, int arg1) {
 				mIsConnected = false;
 				disconnectFromServer();
@@ -148,49 +150,47 @@ public class MainActivity extends Activity {
 			}
 		});
 
-		// ������ �������������� �� ���������� � ������� �������
+		// Диалог предупреждения об управлении с базовой станции
 		AlertDialog.Builder adb = new AlertDialog.Builder(this);
-		adb.setTitle("��������!");
-		adb.setMessage("���������� �������� �������� ����������!");
+		adb.setTitle("Внимание!");
+		adb.setMessage("Управление передано главному приложению!");
 		adb.setIcon(android.R.drawable.ic_dialog_info);
-		adb.setNegativeButton("�����", new OnClickListener() {
+		adb.setNegativeButton("Выход", new OnClickListener() {
 			public void onClick(DialogInterface arg0, int arg1) {
 				finish();
 				return;					
 			}
 		});
 
-		// �������� �������
+		// Создание диалога
 		mRemoteControlDialog = adb.create();
 
-		// ���������� ������ ������� ����� ������ Back
+		// Обработчик отмены диалога через кнопку Back
 		mRemoteControlDialog.setOnCancelListener(new OnCancelListener() {
 			public void onCancel(DialogInterface dialog) {
 				finish();
 			}
 		});
 
-		// ������ ����������� �� ��������� ������� �� ������� �������
 		adb = new AlertDialog.Builder(this);
-		adb.setTitle("��������!");
-		adb.setMessage("������ �� ������� ��������!");
+		adb.setTitle("Внимание!");
+		adb.setMessage("Расчет на станции завершен!");
 		adb.setIcon(android.R.drawable.ic_dialog_info);
-		adb.setNegativeButton("��", new OnClickListener() {
+		adb.setNegativeButton("Ок", new OnClickListener() {
 			public void onClick(DialogInterface arg0, int arg1) {
 				return;					
 			}
 		});
 
-		// �������� �������
 		mProcessingOverDialog = adb.create();
 		
-		// ������ ������ ������ ��
+		// Список режимо работы ПО
 		mModesList = new ArrayList<String>();
-		// ������� ��� mModesList
+		// Адаптер для mModesList
 		mArrayAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, mModesList);
 		mArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 
-		// ������������� UI
+		// Инициализация UI
 		mTextViewDegrees = (TextView) findViewById(R.id.textViewDegrees);
 		mTextViewMinutus = (TextView) findViewById(R.id.textViewMinutus);
 
@@ -240,17 +240,18 @@ public class MainActivity extends Activity {
 
 		mSpinner = (Spinner) findViewById(R.id.spinnerMode);
 		mSpinner.setOnItemSelectedListener(mOnItemSelectedListener);
-		mSpinner.setPrompt("����� ������");
+		mSpinner.setPrompt("Режим работы");
 		mSpinner.setAdapter(mArrayAdapter);
 
 		mMainLayout = (LinearLayout) findViewById(R.id.layoutContent);
 
 		loadSettings();
 
-		// ��������� ����
+		// Генерация вида
 		createView(mViewType);
 
-		// ����� ���� � �����������
+
+		// Вызов окна с настройками
 		final boolean isBlockingMode = false;
 		startSettingsActivity(isBlockingMode);
 	}
@@ -358,7 +359,7 @@ public class MainActivity extends Activity {
 
 	
 	private void saveSettings() {
-		// ����� ������ � �����������
+		// Режим работы с настройками
 		mPreferences = getPreferences(MODE_PRIVATE);
 		Editor editor = mPreferences.edit();
 		editor.putInt(VIEW_TYPE, mViewType);
@@ -367,7 +368,7 @@ public class MainActivity extends Activity {
 	
 	
 	private void loadSettings() {
-		// ����� ���������� ��������
+		// Режим сохранения настроек
 		mPreferences = getPreferences(MODE_PRIVATE);
 		mViewType = mPreferences.getInt(VIEW_TYPE, ViewType.JoystickView.getType());
 	}
@@ -392,7 +393,7 @@ public class MainActivity extends Activity {
 	}
 
 
-	// ����������� � �������
+	// Подключение к серверу
 	private void connectToServer(String serverAddress, int port) {
 
 		disconnectFromServer();
@@ -408,7 +409,7 @@ public class MainActivity extends Activity {
 	}
 
 
-	// ���������� �� �������
+	// Отключение от сервера
 	private void disconnectFromServer() {
 		if (mNetwork != null)
 			mNetwork.close();
@@ -417,7 +418,7 @@ public class MainActivity extends Activity {
 	}
 
 
-	// ���������� ��������� � ��������� ������ ������� ����
+	// Обработчик сообщений о изменении списка режимов БИНС
 	static Handler mPackageReceivedHandler = new Handler() {
 		public void handleMessage(android.os.Message msg) {
 
@@ -439,7 +440,7 @@ public class MainActivity extends Activity {
 				break;
 			case isRunnedData:
 				if (mToggleButton.isChecked() && (Boolean)msg.obj == false) {
-					mSeekBarForce.setProgress(0);
+                    setDefaultForce();
 					mProcessingOverDialog.show();
 				}
 				mToggleButton.setChecked((Boolean)msg.obj);
@@ -451,7 +452,7 @@ public class MainActivity extends Activity {
 	};
 
 
-	// ���������� ��������� � ��������� �����������
+	// Обработчик сообщений о состоянии подключения
 	static Handler mNetworkStateChangeHandler = new Handler() {
 		public void handleMessage(android.os.Message msg) {
 			SocketState state = (SocketState)msg.obj;
@@ -465,7 +466,7 @@ public class MainActivity extends Activity {
 				if (mConnectToServerDialog != null && mConnectToServerDialog.isShowing())
 					mConnectToServerDialog.dismiss();
 				mIsConnected = false;
-				mSeekBarForce.setProgress(0);
+                setDefaultForce();
 				mToggleButton.setChecked(false);
 				Toast.makeText(mMainActivityContext, R.string.connection_fail, Toast.LENGTH_LONG).show();
 				break;
@@ -480,7 +481,7 @@ public class MainActivity extends Activity {
 				mArrayAdapter.clear();
 				mArrayAdapter.notifyDataSetChanged();
 				mIsConnected = false;
-				mSeekBarForce.setProgress(0);
+                setDefaultForce();
 				mToggleButton.setChecked(false);
 				Toast.makeText(mMainActivityContext, R.string.connection_aborted, Toast.LENGTH_LONG).show();
 				break;
@@ -489,7 +490,7 @@ public class MainActivity extends Activity {
 	};
 
 
-	// ��������� ��������� � NumberPicker (������� � ������)
+	// Слушатель изменений в NumberPicker (градусы и минуты)
 	OnChangedListener mOnNumberPickerValueChangeListener = new OnChangedListener() {
 
 		@Override
@@ -511,7 +512,7 @@ public class MainActivity extends Activity {
 	};
 
 
-	// ��������� ����
+	// Генерация меню
 	public boolean onCreateOptionsMenu(Menu menu) {
 
 		getMenuInflater().inflate(R.menu.activity_main, menu);
@@ -519,7 +520,7 @@ public class MainActivity extends Activity {
 	};
 
 
-	// ����������� ������ ���� "���������� / ���������"
+	// Модификация пункта меню "Подключить / Отключить"
 	public boolean onPrepareOptionsMenu(Menu menu) {
 
 		MenuItem item = menu.findItem(R.id.menu_connection);
@@ -540,7 +541,7 @@ public class MainActivity extends Activity {
 		case R.id.menu_connection:
 			if (mIsConnected) {
 				disconnectFromServer();
-				// ����� ��������� � �������������� ������� �����
+				// Вывод сообщения о принудительном разрыве связи
 				Message msg = mNetworkStateChangeHandler.obtainMessage(0, SocketState.Aborted);
 				mNetworkStateChangeHandler.sendMessage(msg);
 			} else {
@@ -560,7 +561,7 @@ public class MainActivity extends Activity {
 	}
 
 
-	// ������� ����������� ���������
+	// Событие перемещения джойстика
 	private JoystickMovedListener joystickListener = new JoystickMovedListener() {
 
 		public void OnMoved(int x, int y) {
@@ -573,7 +574,7 @@ public class MainActivity extends Activity {
 	};
 
 
-	// ��������� ��������� ������ � ��������
+	// Слушатель изменений данных в адаптере
 	PackageReceivedListener mPackageReceivedListener = new PackageReceivedListener() {
 
 		public void OnReceivedPackage(int what, Object item) {
@@ -603,7 +604,7 @@ public class MainActivity extends Activity {
 	};
 
 
-	// ��������� ������ ������ ������ ����
+	// Слушатель выбора режима работы БИНС
 	OnItemSelectedListener mOnItemSelectedListener = new OnItemSelectedListener() {
 
 		public void onItemSelected(AdapterView<?> arg0, View view, int position, long id) {
@@ -629,34 +630,36 @@ public class MainActivity extends Activity {
 	};
 
 
-	// ������� �������� � �������������� Activity
+	// Событие возврата с альтернативной Activity
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		super.onActivityResult(requestCode, resultCode, data);
 
 		mNetworkPreferences = (NetworkPreferences)data.getParcelableExtra("NetworkPreferences");
 		mCommonPreferences = (CommonPreferences)data.getParcelableExtra("CommonPreferences");
 
-		// �������� ��������� �� ������������� ������ (Content)
-		// ������
+		// Копируем настройки во промежуточную память (Content)
+		// Широта
 		mContent.setLatitude(mCommonPreferences.getLatitudeDegrees(),
 				mCommonPreferences.getLatitudeMinutus(), mCommonPreferences.getLatitudeSeconds());
-		// �������
+		// Долгота
 		mContent.setLongitude(mCommonPreferences.getLongitudeDegrees(),
 				mCommonPreferences.getLongitudeMinutus(), mCommonPreferences.getLongitudeSeconds());
-		// ������
+		// Высота
 		mContent.setHeight(mCommonPreferences.getHeight());
-		// ��������
+		// Скорость
 		mContent.setSpeed(mCommonPreferences.getSpeed());
-		// ����
+		// Курс
 		mContent.setCourse(mCommonPreferences.getCourseDegrees(), mCommonPreferences.getCourseMinutus());
 
-		// ������������� ��������� ���� ��� ��������� ���������� � ������� ����
+		// Устанавливаем стартовый курс для элементов управления в главном окне
 		mNumberPickerDegrees.setCurrent(mCommonPreferences.getCourseDegrees());
 		mTextViewDegrees.setText(Integer.toString(mCommonPreferences.getCourseDegrees()) + getString(R.string.degreesSymbol));
 		mNumberPickerMinutus.setCurrent(mCommonPreferences.getCourseMinutus());
 		mTextViewMinutus.setText(Integer.toString(mCommonPreferences.getCourseMinutus()) + getString(R.string.minutusSymbol));
 
-		// ������������, ���� � ���������� ���� ����������� ������� ����� � ���� �������
+        setDefaultForce();
+
+		// Подключаемся, если в настройках была возможность указать адрес и порт сервера
 		if (resultCode == RESULT_FIRST_USER) {
 			boolean isBlockingMode = false;
 			isBlockingMode = data.getBooleanExtra(RUN_MODE, isBlockingMode);
@@ -668,7 +671,7 @@ public class MainActivity extends Activity {
 	}
 
 
-	// ��������� ��������� ��������� SeekBar
+	// Слушатель изменения положения SeekBar
 	OnSeekBarChangeListener onSeekBarChange = new OnSeekBarChangeListener() {
 
 		public void onProgressChanged(SeekBar seekBar, int progress, boolean flag) {
@@ -715,7 +718,7 @@ public class MainActivity extends Activity {
 	};
 
 
-	// ��������� ��������� ����
+	// Слушатель состояния сети
 	NetworkStateChangeListener mNetworkStateChangeListener = new NetworkStateChangeListener() {
 
 		public void OnChangeSocketState(SocketState state) {
@@ -727,19 +730,26 @@ public class MainActivity extends Activity {
 	};
 
 
-	// ������ ��������� ������ ������ ����
+
+	// Кнопка активации режима работы БИНС
 	OnCheckedChangeListener mOnCheckedChangeListener = new OnCheckedChangeListener() {
 
 		public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
 			mContent.setMode((byte)(mSpinner.getSelectedItemPosition() + 1));
 			mContent.setFlags(isChecked, mRemoteControlDialog.isShowing(), false);
-			mSeekBarForce.setProgress(0);
+            setDefaultForce();
 			return;
 		}
 	};
 
+    private static void setDefaultForce() {
+        int force = (mContent.getSpeed() * MAX_FORCE / MAX_SPEED);
+        mSeekBarForce.setProgress(force);
+        mContent.setForce((byte) force);
+    }
 
-	// ������� ���������� ������ ����������
+
+    // Событие завершения работы приложения
 	protected void onDestroy() {
 
 		disconnectFromServer();
