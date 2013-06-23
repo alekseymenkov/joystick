@@ -32,6 +32,7 @@ public class SettingsActivity extends Activity {
     public static final String SPEED = "SPEED";
     public static final String COURSE_DEGREES = "COURSE_DEGREES";
     public static final String COURSE_MINUTUS = "COURSE_MINUTUS";
+    private static final double KMH_TO_MS_COEFF = 3.6;
 
     // Константа для определения режима запуска окна
     final String RUN_MODE = "RUN_MODE";
@@ -258,6 +259,7 @@ public class SettingsActivity extends Activity {
         try {
             mEditTextSpeed.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
             parsingInt = Integer.parseInt(mEditTextSpeed.getText().toString());
+            parsingInt /= KMH_TO_MS_COEFF;
         } catch (NumberFormatException e) {
             mEditTextSpeed.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.indicator_input_error, 0);
             e.printStackTrace();
@@ -365,7 +367,7 @@ public class SettingsActivity extends Activity {
         loadedInt = mPreferences.getInt(SPEED, incorrectIntValue);
         if (loadedInt != incorrectIntValue) {
             mCommonPreferences.setSpeed(loadedInt);
-            mEditTextSpeed.setText(Integer.toString(loadedInt));
+            mEditTextSpeed.setText(Integer.toString((int) (loadedInt * KMH_TO_MS_COEFF)));
         }
 
         // Курс

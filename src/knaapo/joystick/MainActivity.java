@@ -62,7 +62,6 @@ public class MainActivity extends Activity {
 	// Константа для конфигурации UI
 	final String VIEW_TYPE = "VIEW_TYPE";
 
-    static final double KMH_TO_MS_COEFF = 3.6;
 	static final int MAX_FORCE = 200;
     static final int MAX_SPEED = 650;
 	static final int MAX_TANGAGE = 200;
@@ -160,8 +159,7 @@ public class MainActivity extends Activity {
 		adb.setNegativeButton("Выход", new OnClickListener() {
 			public void onClick(DialogInterface arg0, int arg1) {
 				finish();
-				return;					
-			}
+            }
 		});
 
 		// Создание диалога
@@ -180,7 +178,6 @@ public class MainActivity extends Activity {
 		adb.setIcon(android.R.drawable.ic_dialog_info);
 		adb.setNegativeButton("Ок", new OnClickListener() {
 			public void onClick(DialogInterface arg0, int arg1) {
-				return;					
 			}
 		});
 
@@ -207,7 +204,7 @@ public class MainActivity extends Activity {
 		mSeekBarTangage.setMax(MAX_TANGAGE);
 		mSeekBarTangage.setProgress(MAX_TANGAGE / 2);
 		mSeekBarTangage.setOnSeekBarChangeListener(onSeekBarChange);
-		LinearLayout.LayoutParams tangageParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.FILL_PARENT);
+		LinearLayout.LayoutParams tangageParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.MATCH_PARENT);
         tangageParams.setMargins(margin, margin, margin, 0);
 		mSeekBarTangage.setLayoutParams(tangageParams);
 
@@ -216,7 +213,7 @@ public class MainActivity extends Activity {
 		mSeekBarHeeling.setMax(MAX_HEELING);
 		mSeekBarHeeling.setProgress(MAX_HEELING / 2);
 		mSeekBarHeeling.setOnSeekBarChangeListener(onSeekBarChange);
-		LinearLayout.LayoutParams heelingParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.FILL_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+		LinearLayout.LayoutParams heelingParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
 		heelingParams.setMargins(margin, margin, margin, margin);
 		mSeekBarHeeling.setLayoutParams(heelingParams);
 
@@ -272,8 +269,7 @@ public class MainActivity extends Activity {
 			mMainLayout.addView(mSeekBarTangage);
 		}
 
-		return;
-	}
+    }
 
 
 
@@ -357,8 +353,7 @@ public class MainActivity extends Activity {
 
 			createView(mViewType);
 
-			return;
-		}
+        }
 	};
 
 	
@@ -384,8 +379,7 @@ public class MainActivity extends Activity {
 		public void onClick(View v) {
 			mContent.setFlags(mToggleButton.isChecked(), mRemoteControlDialog.isShowing(), true);
             mSpinner.setEnabled(!mToggleButton.isChecked());
-			return;
-		}
+        }
 	};
 
 
@@ -393,8 +387,7 @@ public class MainActivity extends Activity {
 		Intent settingsIntent = new Intent(mSpinner.getContext(), SettingsActivity.class);
 		settingsIntent.putExtra(RUN_MODE, mode);
 		startActivityForResult(settingsIntent, 0);
-		return;
-	}
+    }
 
 
 	// Подключение к серверу
@@ -409,8 +402,7 @@ public class MainActivity extends Activity {
 		mNetworkThread = new Thread(mNetwork, "network");
 		mNetworkThread.start();
 
-		return;
-	}
+    }
 
 
 	// Отключение от сервера
@@ -418,8 +410,7 @@ public class MainActivity extends Activity {
 		if (mNetwork != null)
 			mNetwork.close();
 		mNetwork = null;
-		return;
-	}
+    }
 
 
 	// Обработчик сообщений о изменении списка режимов БИНС
@@ -452,8 +443,7 @@ public class MainActivity extends Activity {
 
 			}
 
-			return;
-		};
+        };
 	};
 
 
@@ -514,7 +504,6 @@ public class MainActivity extends Activity {
 				break;
 			}
 
-			return;
 		}
 	};
 
@@ -576,7 +565,6 @@ public class MainActivity extends Activity {
 			mContent.setJoystickPositionY(y);
 			mSeekBarHeeling.setProgress(x);
 			mSeekBarTangage.setProgress(y);
-			return;
 		}
 	};
 
@@ -632,7 +620,6 @@ public class MainActivity extends Activity {
 		}
 
 		public void onNothingSelected(AdapterView<?> arg0) {
-			return;
 		}
 
 	};
@@ -642,8 +629,8 @@ public class MainActivity extends Activity {
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		super.onActivityResult(requestCode, resultCode, data);
 
-		mNetworkPreferences = (NetworkPreferences)data.getParcelableExtra("NetworkPreferences");
-		mCommonPreferences = (CommonPreferences)data.getParcelableExtra("CommonPreferences");
+		mNetworkPreferences = data.getParcelableExtra("NetworkPreferences");
+		mCommonPreferences = data.getParcelableExtra("CommonPreferences");
 
 		// Копируем настройки во промежуточную память (Content)
 		// Широта
@@ -674,8 +661,6 @@ public class MainActivity extends Activity {
 			if (!isBlockingMode)
 				connectToServer(mNetworkPreferences.getServerAddress(), mNetworkPreferences.getPort());
 		}
-
-		return;
 	}
 
 
@@ -696,8 +681,7 @@ public class MainActivity extends Activity {
 		}
 
 		public void onStartTrackingTouch(SeekBar seekbar) {
-			return;
-		}
+        }
 
 		public void onStopTrackingTouch(final SeekBar seekBar) {
 			if (seekBar.getId() != R.id.seekBarForce) {
@@ -746,13 +730,13 @@ public class MainActivity extends Activity {
 			mContent.setMode((byte)(mSpinner.getSelectedItemPosition() + 1));
 			mContent.setFlags(isChecked, mRemoteControlDialog.isShowing(), false);
             setDefaultForce();
-			return;
+
 		}
 	};
 
     private static void setDefaultForce() {
         int speed = mContent.getSpeed();
-        int force = (int) (speed / KMH_TO_MS_COEFF * MAX_FORCE / MAX_SPEED);
+        int force = speed * MAX_FORCE / MAX_SPEED;
         mSeekBarForce.setProgress(force);
         mContent.setForce((byte) force);
         mContent.setSpeed(speed);
@@ -765,8 +749,7 @@ public class MainActivity extends Activity {
 		disconnectFromServer();
 		
 		super.onDestroy();
-		return;
 
-	};
+    }
 
 }
