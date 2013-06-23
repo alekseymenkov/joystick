@@ -56,11 +56,13 @@ import android.widget.SeekBar.OnSeekBarChangeListener;
 
 public class MainActivity extends Activity {
 
-	// Константа для определения режима запуска окна
+
+    // Константа для определения режима запуска окна
 	final String RUN_MODE = "RUN_MODE";
 	// Константа для конфигурации UI
 	final String VIEW_TYPE = "VIEW_TYPE";
 
+    static final double KMH_TO_MS_COEFF = 3.6;
 	static final int MAX_FORCE = 200;
     static final int MAX_SPEED = 650;
 	static final int MAX_TANGAGE = 200;
@@ -99,7 +101,7 @@ public class MainActivity extends Activity {
 	VerticalSeekBar mSeekBarTangage;
 	SeekBar mSeekBarHeeling;
 	static JoystickView mJoystickView;
-	Spinner mSpinner;
+	static Spinner mSpinner;
 	static ToggleButton mToggleButton;
 	NumberPicker mNumberPickerDegrees;
 	NumberPicker mNumberPickerMinutus;
@@ -199,12 +201,14 @@ public class MainActivity extends Activity {
 		mSeekBarForce.setMax(MAX_FORCE);
 		mSeekBarForce.setProgress(0);
 
+        int margin = (int) getResources().getDimension(R.dimen.commonValue);
 		mSeekBarTangage = new VerticalSeekBar(this);
 		mSeekBarTangage.setProgressDrawable(getResources().getDrawable(android.R.drawable.progress_indeterminate_horizontal));
 		mSeekBarTangage.setMax(MAX_TANGAGE);
 		mSeekBarTangage.setProgress(MAX_TANGAGE / 2);
 		mSeekBarTangage.setOnSeekBarChangeListener(onSeekBarChange);
 		LinearLayout.LayoutParams tangageParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.FILL_PARENT);
+        tangageParams.setMargins(margin, margin, margin, 0);
 		mSeekBarTangage.setLayoutParams(tangageParams);
 
 		mSeekBarHeeling = new SeekBar(this);
@@ -213,7 +217,7 @@ public class MainActivity extends Activity {
 		mSeekBarHeeling.setProgress(MAX_HEELING / 2);
 		mSeekBarHeeling.setOnSeekBarChangeListener(onSeekBarChange);
 		LinearLayout.LayoutParams heelingParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.FILL_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-		heelingParams.setMargins(0, 0, 0, (int) getResources().getDimension(R.dimen.commonValue));
+		heelingParams.setMargins(margin, margin, margin, margin);
 		mSeekBarHeeling.setLayoutParams(heelingParams);
 
 		mToggleButton = (ToggleButton) findViewById(R.id.toggleBtnMode);
@@ -264,7 +268,7 @@ public class MainActivity extends Activity {
 		if (ViewType.JoystickView.getType() == viewType) {
 			mMainLayout.addView(mJoystickView);
 		} else if (ViewType.SeekBarView.getType() == viewType) {
-			mMainLayout.addView(mSeekBarHeeling);
+            mMainLayout.addView(mSeekBarHeeling);
 			mMainLayout.addView(mSeekBarTangage);
 		}
 
@@ -379,7 +383,7 @@ public class MainActivity extends Activity {
 		@Override
 		public void onClick(View v) {
 			mContent.setFlags(mToggleButton.isChecked(), mRemoteControlDialog.isShowing(), true);
-
+            mSpinner.setEnabled(!mToggleButton.isChecked());
 			return;
 		}
 	};
@@ -444,6 +448,7 @@ public class MainActivity extends Activity {
 					mProcessingOverDialog.show();
 				}
 				mToggleButton.setChecked((Boolean)msg.obj);
+                mSpinner.setEnabled(!(Boolean)msg.obj);
 
 			}
 
@@ -468,6 +473,7 @@ public class MainActivity extends Activity {
 				mIsConnected = false;
                 setDefaultForce();
 				mToggleButton.setChecked(false);
+                mSpinner.setEnabled(true);
 				Toast.makeText(mMainActivityContext, R.string.connection_fail, Toast.LENGTH_LONG).show();
 				break;
 			case Connected:
@@ -483,6 +489,7 @@ public class MainActivity extends Activity {
 				mIsConnected = false;
                 setDefaultForce();
 				mToggleButton.setChecked(false);
+                mSpinner.setEnabled(true);
 				Toast.makeText(mMainActivityContext, R.string.connection_aborted, Toast.LENGTH_LONG).show();
 				break;
 			}
@@ -612,6 +619,7 @@ public class MainActivity extends Activity {
 			mContent.setMode((byte)(position + 1));
 			mContent.setFlags(false, mRemoteControlDialog.isShowing(), false);
 			mToggleButton.setChecked(false);
+            mSpinner.setEnabled(true);
 
 			if (!mIsFirstRun) {
 				final boolean isBlockingMode = true;
@@ -743,9 +751,11 @@ public class MainActivity extends Activity {
 	};
 
     private static void setDefaultForce() {
-        int force = (mContent.getSpeed() * MAX_FORCE / MAX_SPEED);
+        int speed = mContent.getSpeed();
+        int force = (int) (speed / KMH_TO_MS_COEFF * MAX_FORCE / MAX_SPEED);
         mSeekBarForce.setProgress(force);
         mContent.setForce((byte) force);
+        mContent.setSpeed(speed);
     }
 
 

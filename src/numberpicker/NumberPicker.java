@@ -16,7 +16,6 @@
  */
 package numberpicker;
 
-import knaapo.joystick.R;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.os.Handler;
@@ -35,6 +34,8 @@ import android.widget.TextView;
 import android.widget.LinearLayout;
 import android.widget.EditText;
 import android.widget.TextView.OnEditorActionListener;
+
+import knaapo.joystick.R;
 
 /**
  * This class has been pulled from the Android platform source code, its an internal widget that hasn't been

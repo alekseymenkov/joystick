@@ -1,6 +1,5 @@
 package network;
 
-
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.Socket;
@@ -128,8 +127,8 @@ public class PackageSender implements Runnable {
 			
 			if (mContent.isForceChanged()) {
 				elementID = 9;
-				if (!sendDataPackage(elementID, mContent.getForce()))
-					break;
+                if (!sendDataPackage(elementID, mContent.getForce()))
+                    break;
 			}
 		}
 		
